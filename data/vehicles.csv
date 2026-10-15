@@ -1,0 +1,4 @@
+vehicle_id,capacity_liters,supported_waste,status,latitude,longitude
+TRUCK-01,8000,"general|recyclable",available,19.072,72.876
+TRUCK-02,5000,organic,available,19.080,72.874
+TRUCK-03,6000,general,maintenance,19.066,72.870

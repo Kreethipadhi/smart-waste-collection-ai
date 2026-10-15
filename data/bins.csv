@@ -1,0 +1,7 @@
+bin_id,zone,latitude,longitude,waste_type,capacity_liters,sensor_id,collection_threshold
+BIN-001,Civic Square,19.076,72.877,general,1000,S-001,85
+BIN-003,Market Street,19.079,72.881,recyclable,800,S-003,85
+BIN-004,North Campus,19.083,72.875,organic,750,S-004,85
+BIN-006,Riverside Park,19.071,72.883,general,1000,S-006,85
+BIN-008,Station Road,19.074,72.889,general,900,S-008,85
+BIN-010,Tech District,19.082,72.890,recyclable,900,S-010,85

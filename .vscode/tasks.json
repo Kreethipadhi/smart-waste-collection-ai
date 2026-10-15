@@ -1,0 +1,74 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build project",
+			"type": "shell",
+			"command": "npm run build",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Verify map fix",
+			"type": "shell",
+			"command": "npm run build",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run backend tests",
+			"type": "shell",
+			"command": "python -m pytest backend/tests -q",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Verify route fix",
+			"type": "shell",
+			"command": "python -m pytest backend/tests -q",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Verify route and agent fix",
+			"type": "shell",
+			"command": "python -m pytest backend/tests -q",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Final frontend validation",
+			"type": "shell",
+			"command": "npm run build",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Organize frontend files",
+			"type": "shell",
+			"command": "if not exist frontend mkdir frontend && move /Y index.html frontend && move /Y package.json frontend && move /Y package-lock.json frontend && move /Y src frontend && move /Y tsconfig.json frontend && move /Y tsconfig.node.json frontend && move /Y vite.config.ts frontend && move /Y vite.config.js frontend && move /Y vite.config.d.ts frontend && if exist .env.example move /Y .env.example frontend",
+			"args": [],
+			"isBackground": false,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}
