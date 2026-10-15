@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import Boolean, Column, Float, ForeignKey, Index, Integer, MetaData, String, Table, Text, create_engine, event
 from sqlalchemy.engine import Engine
 
@@ -56,21 +57,54 @@ audit_logs = Table(
 )
 
 
-def create_database_engine(database_url: str) -> Engine:
-    options = {'pool_pre_ping': True, 'pool_recycle': 1800}
-    if database_url.startswith('sqlite:'):
-        options['connect_args'] = {'check_same_thread': False, 'timeout': 30}
-    elif database_url.startswith('postgresql+'):
-        options['connect_args'] = {'connect_timeout': 10}
+
+def create_database_engine(database_url: str | None = None) -> Engine:
+    database_url = database_url or os.getenv("DATABASE_URL")
+
+    if not database_url:
+        raise RuntimeError(
+            "DATABASE_URL is not configured. "
+            "Set it in your environment before starting the application."
+        )
+
+    options = {
+        "pool_pre_ping": True,
+        "pool_recycle": 1800,
+    }
+
+    if database_url.startswith("sqlite:"):
+        options["connect_args"] = {
+            "check_same_thread": False,
+            "timeout": 30,
+        }
+
+    elif database_url.startswith("postgresql://"):
+        database_url = database_url.replace(
+            "postgresql://",
+            "postgresql+psycopg://",
+            1,
+        )
+        options["connect_args"] = {"connect_timeout": 10}
+
+    elif database_url.startswith("postgresql+psycopg://"):
+        options["connect_args"] = {"connect_timeout": 10}
+
     else:
-        raise RuntimeError('DATABASE_URL must use SQLite locally or PostgreSQL with psycopg in production.')
+        raise RuntimeError(
+            "DATABASE_URL must use SQLite locally or PostgreSQL with psycopg."
+        )
 
     engine = create_engine(database_url, **options)
-    if database_url.startswith('sqlite:'):
-        @event.listens_for(engine, 'connect')
+
+    if database_url.startswith("sqlite:"):
+
+        @event.listens_for(engine, "connect")
         def enable_sqlite_foreign_keys(connection, _record):
             cursor = connection.cursor()
-            cursor.execute('PRAGMA foreign_keys=ON')
-            cursor.execute('PRAGMA busy_timeout=30000')
+            cursor.execute("PRAGMA foreign_keys=ON")
+            cursor.execute("PRAGMA busy_timeout=30000")
             cursor.close()
+
     return engine
+
+

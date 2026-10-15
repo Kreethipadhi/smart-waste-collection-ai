@@ -5,7 +5,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from .config import Settings
-from .models import ApprovalRequest, Bin, LoginRequest, PriorityDecision, RouteStatus, SensorReading, WorkflowResult, utcnow
+from .models import ApprovalRequest, Bin, LoginRequest, PriorityDecision, RouteStatus, SensorReading,Vehicle, WorkflowResult, utcnow
 from .repository import Repository
 from .agents import SmartBinMonitoringAgent, WasteOperationsAgent, RecyclingSegregationAgent
 from .reporting import build_report
@@ -94,6 +94,30 @@ def register_bin(bin: Bin, user: dict = Depends(require_operator)):
     return bin
 @app.get('/api/vehicles')
 def vehicles(_user: dict = Depends(get_current_user)): return repo.vehicles()
+@app.post('/api/vehicles', status_code=201)
+def register_vehicle(vehicle: Vehicle, user: dict = Depends(require_operator)):
+    if any(existing.id == vehicle.id for existing in repo.vehicles()):
+        raise HTTPException(
+            status_code=409,
+            detail='A vehicle with this ID is already registered',
+        )
+
+    repo.save_vehicle(vehicle)
+
+    repo.save_audit(
+        user['id'],
+        'vehicle_registered',
+        'vehicle',
+        vehicle.id,
+        {
+            'capacity_liters': vehicle.capacity_liters,
+            'supported_waste': [
+                waste.value for waste in vehicle.supported_waste
+            ],
+        },
+    )
+
+    return vehicle
 @app.get('/api/routes')
 def routes(_user: dict = Depends(get_current_user)): return repo.routes()
 @app.get('/api/events')
